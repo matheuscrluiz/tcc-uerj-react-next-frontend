@@ -21,11 +21,15 @@ import { InputText } from "primereact/inputtext";
 import {
     crudBodyTemplate,
     uniqueFilterTemplate,
+    verifiedBodyTemplate,
+    verifiedFilterTemplate,
 } from "../../components/Templates/templates";
 import { Dialog } from "primereact/dialog";
 import { clearNumber } from "../../utils/configs";
-import { Password } from "primereact/password";
+import { InputTextarea } from "primereact/inputtextarea";
 import { FilterMatchMode } from "primereact/api";
+import { SelectButton, SelectButtonChangeEvent } from "primereact/selectbutton";
+import { options } from "../../utils/utils";
 
 interface UserProps {
     loading(b: boolean): void;
@@ -38,8 +42,13 @@ const initfilter = {
     ch_rede: { value: null, matchMode: FilterMatchMode.IN },
     email: { value: null, matchMode: FilterMatchMode.IN },
     matricula: { value: null, matchMode: FilterMatchMode.IN },
-    cpf: { value: null, matchMode: FilterMatchMode.IN },
+    codigo: { value: null, matchMode: FilterMatchMode.IN },
+    ativo: {
+        value: null,
+        matchMode: FilterMatchMode.EQUALS,
+    },
 };
+
 export default function UserScreen({ loading, toast }: UserProps) {
     const [users, setUsers] = useState<Users[]>([]);
     const [currentUser, setCurrentUser] = useState<Users>(newUsers);
@@ -49,6 +58,7 @@ export default function UserScreen({ loading, toast }: UserProps) {
         ...initfilter,
     });
     const service = new Service();
+
     useEffect(() => {
         init();
     }, []);
@@ -57,13 +67,18 @@ export default function UserScreen({ loading, toast }: UserProps) {
         try {
             loading(true);
             const response = await service.getUser();
-            setUsers(response.data_return);
+            const formattedUsers = response.data_return.map((data: Users) => ({
+                ...data,
+                ativo: data.ativo === "S",
+            }));
+            setUsers(formattedUsers);
         } catch (error) {
             showMessageError(error, toast);
         } finally {
             loading(false);
         }
     };
+
     const onGlobalFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         const _filters = { ...filters };
@@ -77,12 +92,14 @@ export default function UserScreen({ loading, toast }: UserProps) {
         setFilters({ ...filters });
         setGlobalFilter("");
     };
+
     const AddUser = () => {
         setIsDialogVisible(true);
     };
+
     const tableHeader = (
         <div className="flex flex-column gap-2 md:gap-0 md:flex-row md:justify-content-between">
-            <div className="p-inputgroup w-full md:w-1  ">
+            <div className="p-inputgroup w-full md:w-1">
                 <Button
                     className="mr-0 md:mr-2"
                     outlined
@@ -133,52 +150,46 @@ export default function UserScreen({ loading, toast }: UserProps) {
         };
         const msgDelete = (
             <>
-                <span className="text-lg">
+                <span className="text-lg font-medium">
                     Você irá remover o seguinte usuário:
                 </span>
                 <div className="flex flex-column gap-2 mt-3 p-2 border-400 border-solid border-1 border-round-sm">
-                    <span>
-                        <i className="mr-1 pi pi-exclamation-circle" />
-                        Nome:
-                        <b> {data.nome}</b>
+                    <span className="flex align-items-center gap-2 text-sm text-lg">
+                        <i className="pi pi-user text-primary" />
+                        <span className="font-medium">Nome:</span>
+                        <b className="text-lg">{data.nome}</b>
                     </span>
-                    <span>
-                        <i className="mr-1 pi pi-exclamation-circle" />
-                        Chave de rede:
-                        <b> {data.ch_rede}</b>
+                    <span className="flex align-items-center gap-2 text-sm text-lg">
+                        <i className="pi pi-tag text-primary" />
+                        <span className="font-medium">Chave de rede:</span>
+                        <b className="text-lg">{data.ch_rede}</b>
                     </span>
-                    <span>
-                        <i className="mr-1 pi pi-exclamation-circle" />
-                        E-mail:
-                        <b> {data.email}</b>
+                    <span className="flex align-items-center gap-2 text-sm text-lg">
+                        <i className="pi pi-envelope text-primary" />
+                        <span className="font-medium">E-mail:</span>
+                        <b className="text-lg">{data.email}</b>
                     </span>
-                    <span>
-                        <i className="mr-1 pi pi-exclamation-circle" />
-                        CPF:
-                        <b> {data.cpf}</b>
+                    <span className="flex align-items-center gap-2 text-sm text-lg">
+                        <i className="pi pi-id-card text-primary" />
+                        <span className="font-medium">Matrícula:</span>
+                        <b className="text-lg">{data.matricula}</b>
                     </span>
-                    {/* <span>
-                        <i className="mr-1 pi pi-exclamation-circle" />
-                        Flag de config. de Desenvolvimento:
-                        <b>
-                            {verifiedBodyTemplate(
-                                data,
-                                "flag_determ_config_desenv_boolean"
-                            )}
+                    <span className="flex align-items-center gap-2 text-sm text-lg">
+                        <i className="pi pi-check-circle text-primary" />
+                        <span className="font-medium">Ativo:</span>
+                        <b className="text-lg">
+                            {verifiedBodyTemplate(data, "ativo")}
                         </b>
-                    </span> */}
+                    </span>
                 </div>
             </>
         );
-        return crudBodyTemplate(data, false, onEdit, onDelete, msgDelete);
+        return crudBodyTemplate(data, true, onEdit, onDelete, msgDelete);
     };
 
     const handleDelete = async (user: Users) => {
         try {
-            const response = await service.deleteUser(
-                user.ch_rede,
-                user.id_usuario
-            );
+            const response = await service.deleteUser(user.id);
             showMessageResponse(response, toast);
         } catch (error) {
             showMessageError(error, toast);
@@ -186,10 +197,12 @@ export default function UserScreen({ loading, toast }: UserProps) {
             init();
         }
     };
+
     const onHide = () => {
         setIsDialogVisible(false);
         setCurrentUser(newUsers);
     };
+
     const DialogFooter = (
         <>
             <Button
@@ -200,9 +213,7 @@ export default function UserScreen({ loading, toast }: UserProps) {
                 className="p-button-text p-button-danger"
             ></Button>
             <Button
-                label={
-                    currentUser.id_usuario === clearNumber ? "Criar" : "Editar"
-                }
+                label={currentUser.id === clearNumber ? "Criar" : "Editar"}
                 icon="pi pi-check"
                 form="form"
                 type="submit"
@@ -211,9 +222,8 @@ export default function UserScreen({ loading, toast }: UserProps) {
                         currentUser.ch_rede &&
                         currentUser.nome &&
                         currentUser.email &&
-                        currentUser.cpf &&
                         currentUser.matricula &&
-                        currentUser.senha
+                        currentUser.tipo_usuario_id
                     )
                 }
                 className="p-button-text"
@@ -225,10 +235,14 @@ export default function UserScreen({ loading, toast }: UserProps) {
         try {
             event.preventDefault();
             let response;
-            if (currentUser.id_usuario === clearNumber) {
-                response = await service.createUser(currentUser);
+            const userToSubmit: Users = {
+                ...(currentUser as Users),
+                ativo: currentUser.ativo ? "S" : "N",
+            };
+            if (currentUser.id === clearNumber) {
+                response = await service.createUser(userToSubmit);
             } else {
-                response = await service.updateUser(currentUser);
+                response = await service.updateUser(userToSubmit);
             }
             showMessageResponse(response, toast);
         } catch (error) {
@@ -238,6 +252,7 @@ export default function UserScreen({ loading, toast }: UserProps) {
             init();
         }
     };
+
     return (
         <>
             <DataTable
@@ -250,6 +265,7 @@ export default function UserScreen({ loading, toast }: UserProps) {
                 rowsPerPageOptions={[5, 10, 25]}
                 paginator
                 removableSort
+                emptyMessage={C.MSG_NENHUM_RESULTADO_ENCONTRADO}
             >
                 <Column
                     sortable
@@ -336,13 +352,13 @@ export default function UserScreen({ loading, toast }: UserProps) {
                         )
                     }
                     sortable
-                    header="Matricula"
+                    header="Matrícula"
                     field="matricula"
                 />
                 <Column
                     align="center"
                     filter
-                    filterField="cpf"
+                    filterField="codigo"
                     showFilterMenuOptions={false}
                     filterMenuStyle={{ width: "16rem" }}
                     filterElement={(
@@ -352,14 +368,29 @@ export default function UserScreen({ loading, toast }: UserProps) {
                             options,
                             getUniqueValues(
                                 users
-                                    .map((element: Users) => element.cpf)
+                                    .map((element: Users) => element.codigo)
                                     .sort()
                             )
                         )
                     }
                     sortable
-                    header="CPF"
-                    field="cpf"
+                    header="Código"
+                    field="codigo"
+                />
+                <Column
+                    sortable
+                    align="center"
+                    alignHeader="center"
+                    header="Ativo"
+                    field="ativo"
+                    filter
+                    filterField="ativo"
+                    filterMenuStyle={{ width: "16rem" }}
+                    filterElement={verifiedFilterTemplate}
+                    showFilterMenuOptions={false}
+                    body={(rowData: Users) =>
+                        verifiedBodyTemplate(rowData, "ativo")
+                    }
                 />
                 <Column
                     align="center"
@@ -369,13 +400,10 @@ export default function UserScreen({ loading, toast }: UserProps) {
                     body={optionsBodyTemplate}
                 />
             </DataTable>
+
             <Dialog
                 visible={isDialogVisible}
-                header={
-                    currentUser.id_usuario === clearNumber
-                        ? "Adicionar"
-                        : "Editar"
-                }
+                header={currentUser.id === clearNumber ? "Adicionar" : "Editar"}
                 onHide={onHide}
                 modal
                 footer={DialogFooter}
@@ -383,13 +411,14 @@ export default function UserScreen({ loading, toast }: UserProps) {
                 style={{ width: "30vw" }}
             >
                 <form id="form" onSubmit={onFormSubmit}>
-                    <div className="p-fluid">
-                        <div className="field col-12 md:col-12">
-                            <label htmlFor="nome_aluno">
+                    <div className="grid p-fluid">
+                        <div className="field col-12 md:col-6">
+                            <label htmlFor="nome">
                                 Nome
                                 <span style={{ color: "red" }}> *</span>
                             </label>
                             <InputText
+                                id="nome"
                                 value={currentUser.nome}
                                 onChange={(e) => {
                                     setCurrentUser({
@@ -397,14 +426,16 @@ export default function UserScreen({ loading, toast }: UserProps) {
                                         nome: e.target.value,
                                     });
                                 }}
-                            ></InputText>
+                            />
                         </div>
-                        <div className="field col-12 md:col-12">
+
+                        <div className="field col-12 md:col-6">
                             <label htmlFor="ch_rede">
                                 Chave de rede
                                 <span style={{ color: "red" }}> *</span>
                             </label>
                             <InputText
+                                id="ch_rede"
                                 value={currentUser.ch_rede}
                                 maxLength={4}
                                 onChange={(e) => {
@@ -413,14 +444,16 @@ export default function UserScreen({ loading, toast }: UserProps) {
                                         ch_rede: e.target.value,
                                     });
                                 }}
-                            ></InputText>
+                            />
                         </div>
-                        <div className="field col-12 md:col-12">
+
+                        <div className="field col-12 md:col-6">
                             <label htmlFor="email">
                                 E-mail
                                 <span style={{ color: "red" }}> *</span>
                             </label>
                             <InputText
+                                id="email"
                                 value={currentUser.email}
                                 onChange={(e) => {
                                     setCurrentUser({
@@ -428,30 +461,16 @@ export default function UserScreen({ loading, toast }: UserProps) {
                                         email: e.target.value,
                                     });
                                 }}
-                            ></InputText>
+                            />
                         </div>
-                        <div className="field col-12 md:col-12">
-                            <label htmlFor="cpf">
-                                Cpf
-                                <span style={{ color: "red" }}> *</span>
-                            </label>
-                            <InputText
-                                value={currentUser.cpf}
-                                keyfilter="int"
-                                onChange={(e) => {
-                                    setCurrentUser({
-                                        ...currentUser,
-                                        cpf: e.target.value,
-                                    });
-                                }}
-                            ></InputText>
-                        </div>
-                        <div className="field col-12 md:col-12">
+
+                        <div className="field col-12 md:col-6">
                             <label htmlFor="matricula">
-                                Matricula
+                                Matrícula
                                 <span style={{ color: "red" }}> *</span>
                             </label>
                             <InputText
+                                id="matricula"
                                 value={currentUser.matricula}
                                 keyfilter="int"
                                 onChange={(e) => {
@@ -460,28 +479,75 @@ export default function UserScreen({ loading, toast }: UserProps) {
                                         matricula: e.target.value,
                                     });
                                 }}
-                            ></InputText>
+                            />
                         </div>
-                        {currentUser.id_usuario === clearNumber && (
-                            <div className="field col-12 md:col-12">
-                                <label htmlFor="senha">
-                                    Senha
-                                    <span style={{ color: "red" }}> *</span>
-                                </label>
-                                <Password
-                                    toggleMask
-                                    value={currentUser.senha}
-                                    onChange={(
-                                        e: React.ChangeEvent<HTMLInputElement>
-                                    ) => {
-                                        setCurrentUser({
-                                            ...currentUser,
-                                            senha: e.target.value,
-                                        });
-                                    }}
-                                />
-                            </div>
-                        )}
+
+                        <div className="field col-12 md:col-6">
+                            <label htmlFor="codigo">Código</label>
+                            <InputText
+                                id="codigo"
+                                value={currentUser.codigo}
+                                onChange={(e) => {
+                                    setCurrentUser({
+                                        ...currentUser,
+                                        codigo: e.target.value,
+                                    });
+                                }}
+                            />
+                        </div>
+
+                        <div className="field col-12 md:col-6">
+                            <label htmlFor="tipo_usuario_id">
+                                Tipo de Usuário
+                                <span style={{ color: "red" }}> *</span>
+                            </label>
+                            <InputText
+                                id="tipo_usuario_id"
+                                type="number"
+                                value={currentUser.tipo_usuario_id.toString()}
+                                onChange={(e) => {
+                                    setCurrentUser({
+                                        ...currentUser,
+                                        tipo_usuario_id:
+                                            parseInt(e.target.value) ||
+                                            clearNumber,
+                                    });
+                                }}
+                            />
+                        </div>
+
+                        <div className="field col-12 md:col-6">
+                            <label htmlFor="descricao">Descrição</label>
+                            <InputTextarea
+                                id="descricao"
+                                value={currentUser.descricao}
+                                onChange={(e) => {
+                                    setCurrentUser({
+                                        ...currentUser,
+                                        descricao: e.target.value,
+                                    });
+                                }}
+                                rows={3}
+                            />
+                        </div>
+
+                        <div className="field col-12 md:col-6">
+                            <label htmlFor="ativo">
+                                Ativo
+                                <span style={{ color: "red" }}> *</span>
+                            </label>
+                            <SelectButton
+                                id="ativo"
+                                value={currentUser.ativo}
+                                onChange={(e: SelectButtonChangeEvent) => {
+                                    setCurrentUser({
+                                        ...currentUser,
+                                        ativo: e.value as boolean,
+                                    });
+                                }}
+                                options={options}
+                            />
+                        </div>
                     </div>
                 </form>
             </Dialog>
