@@ -1,0 +1,41 @@
+{
+  "name": "tccweb",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start -p $PORT",
+    "lint": "next lint",
+    "prettier:check": "prettier --check \"**/*.{ts,tsx}\"",
+    "prettier:write": "prettier --write \"**/*.{ts,tsx}\""
+  },
+  "dependencies": {
+    "amazon-cognito-identity-js": "^6.3.12",
+    "aws-jwt-verify": "^4.0.1",
+    "axios": "^1.12.0",
+    "chart.js": "^4.5.1",
+    "classnames": "^2.5.1",
+    "file-saver": "^2.0.5",
+    "framer-motion": "^12.27.5",
+    "next": "^14.2.32",
+    "next-auth": "^4.24.12",
+    "primeflex": "^3.3.1",
+    "primeicons": "^7.0.0",
+    "primereact": "^10.6.3",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-typed": "^2.0.12",
+    "react-wavify": "^1.10.0"
+  },
+  "devDependencies": {
+    "@types/file-saver": "^2.0.7",
+    "@types/node": "20.11.0",
+    "@types/react": "18.2.47",
+    "@types/react-dom": "18.2.18",
+    "eslint": "8.56.0",
+    "eslint-config-next": "14.0.4",
+    "prettier": "^3.2.5",
+    "typescript": "5.3.3"
+  }
+}
