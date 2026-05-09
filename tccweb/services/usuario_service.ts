@@ -5,9 +5,9 @@ export default class Service {
     private endpoint = "/usuario";
     public controller = new AbortController();
 
-    async getUser(ch_rede?: string) {
+    async getUser(id?: number) {
         const response = await axiosClient.get(this.endpoint, {
-            params: { ch_rede: ch_rede },
+            params: { id: id },
         });
 
         return response.data;
@@ -26,9 +26,9 @@ export default class Service {
 
         return response.data;
     }
-    async deleteUser(ch_rede: string, id_usuario: number) {
+    async deleteUser(id: number) {
         const response = await axiosClient.delete(this.endpoint, {
-            params: { ch_rede: ch_rede, id_usuario: id_usuario },
+            params: { id: id },
         });
 
         return response.data;
