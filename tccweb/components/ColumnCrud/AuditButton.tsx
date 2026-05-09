@@ -4,6 +4,7 @@ import { Column } from "primereact/column";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { DataTable, DataTableValue } from "primereact/datatable";
 import C from "../../utils/constants";
+import { formatViewDate } from "../Templates/templates";
 
 interface AuditPanelProps<T> {
     target: T;
@@ -17,29 +18,37 @@ function AuditButton<T extends DataTableValue>({
     const audit = useRef(null);
 
     const dataInclBodyTemplate = (rowData: T) => {
-        return <div className="ml-3">{rowData.dat_incl_reg}</div>;
+        return (
+            <div className="ml-3">
+                {formatViewDate(rowData.data_inclusao, true)}
+            </div>
+        );
     };
 
     const usrInclBodyTemplate = (rowData: T) => {
-        return <div className="ml-3">{rowData.ch_usr_incl_reg}</div>;
+        return <div className="ml-3">{rowData.ch_usuario_inclusao}</div>;
     };
 
     const dataAltlBodyTemplate = (rowData: T) => {
-        return <div className="ml-3">{rowData.dat_alt_reg}</div>;
+        return (
+            <div className="ml-3">
+                {formatViewDate(rowData.data_alteracao, true)}
+            </div>
+        );
     };
 
     const usrAltlBodyTemplate = (rowData: T) => {
-        return <div className="ml-3">{rowData.ch_usr_alt_reg}</div>;
+        return <div className="ml-3">{rowData.ch_usuario_alteracao}</div>;
     };
 
     const columns = [
         {
-            field: "dat_incl_reg",
+            field: "data_inclusao",
             header: C.DATA_INCLUSAO,
             body: dataInclBodyTemplate,
         },
         {
-            field: "ch_usr_incl_reg",
+            field: "ch_usuario_inclusao",
             header: C.USUARIO_INCLUSAO,
             body: usrInclBodyTemplate,
         },
@@ -47,12 +56,12 @@ function AuditButton<T extends DataTableValue>({
     if (alteracao) {
         columns.push(
             {
-                field: "dat_alt_reg",
+                field: "data_alteracao",
                 header: C.DATA_ALTERACAO,
                 body: dataAltlBodyTemplate,
             },
             {
-                field: "ch_usr_alt_reg",
+                field: "ch_usuario_alteracao",
                 header: C.USUARIO_ALTERACAO,
                 body: usrAltlBodyTemplate,
             }
