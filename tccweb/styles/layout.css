@@ -1,0 +1,189 @@
+.finance-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-color);
+}
+.p-password {
+    position: relative;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* input */
+.p-password-input {
+    width: 100%;
+    padding-right: 2.75rem; /* espaço para o ícone */
+}
+
+/* SVG de mostrar senha */
+.p-password-show-icon,
+.p-password-hide-icon {
+    position: absolute;
+    right: 0.75rem;
+    left: auto !important;
+    top: 50%;
+    cursor: pointer;
+    z-index: 2;
+}
+
+
+.finance-icon {
+    font-size: 3rem;
+    color: var(--primary-color);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: .7; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.p-menubar {
+ background: linear-gradient(135deg, #0f766e, #16a34a);
+   display: flex;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  padding: 0;
+  margin: 0;
+  backdrop-filter: blur(8px);
+
+  border: none;
+  border-radius: 0 0 18px 18px;
+
+}
+
+.p-menubar>*:nth-child(1) {
+  order: 2;
+}
+
+.p-menubar>*:nth-child(2) {
+  order: 1;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.p-menubar>*:nth-child(3) {
+  order: 3;
+}
+
+.p-menubar>*:nth-child(4) {
+  order: 4;
+}
+
+/* Tela pequena */
+.p-menubar>.p-menubar-button {
+  margin-left: 7px;
+}
+
+.p-menubar .p-menubar-root-list>.p-focus>.p-menuitem-content {
+  /* background: rgb(1, 25, 48); */
+  outline: 0 none;
+  outline-offset: 0;
+  box-shadow: inset 0 0 0 0.05rem #22e67a;
+}
+
+/* Cor do texto dos submenus */
+.p-menubar .p-submenu-list>.p-menuitem>.p-menuitem-content>.p-menuitem-link>.p-menuitem-text {
+  color: #495057;
+}
+
+/* Cor do fundo dos menus ao passar mouse */
+.p-menubar .p-submenu-list>.p-menuitem>.p-menuitem-content>.p-menuitem-link:hover {
+  background-color: #E9ECEF;
+}
+
+
+/* Cor do fundo do hamburguer ao passar mouse */
+.p-menubar .p-menubar-button:hover {
+  background: rgb(48, 1, 1);
+}
+
+/* Tela grande */
+@media screen and (min-width: 960px) {
+
+  /* Cor do texto com hover  */
+  .p-menubar .p-menubar-root-list>.p-menuitem>.p-menuitem-link:not(.p-disabled):hover .p-menuitem-text {
+    color: rgb(214, 208, 208);
+  }
+
+  .p-menubar .p-menuitem-content:hover {
+    background: rgb(222, 243, 231);
+  }
+
+  .p-menubar .p-menubar-root-list>.p-focus>.p-menuitem-content {
+    background: rgb(1, 25, 48);
+  }
+
+  .p-menubar .p-menuitem-active .p-menuitem-content {
+    background: rgb(1, 25, 48);
+  }
+
+  .p-menubar .p-submenu-list .p-menuitem-content {
+    background: #FFFFFF;
+  }
+
+
+  .p-menubar .p-menubar-root-list>.p-menuitem
+
+  /* > .p-menuitem-link */
+  .p-menuitem-text {
+    color: rgb(214, 208, 208);
+    font-weight: 500;
+  }
+
+  .p-menubar .p-menubar-root-list>.p-menuitem>.p-menuitem-link:not(.p-disabled):hover {
+    color: rgb(214, 208, 208);
+    background: rgb(1, 25, 48);
+  }
+
+  .p-menubar .p-menubar-root-list>.p-menuitem.p-menuitem-active>.p-menuitem-link,
+  .p-menubar .p-menubar-root-list>.p-menuitem.p-menuitem-active>.p-menuitem-link:not(.p-disabled):hover {
+    background: rgb(1, 25, 48);
+  }
+
+  .p-menubar>*:nth-child(1) {
+    order: 2;
+  }
+
+  .p-menubar>*:nth-child(2) {
+    order: 1;
+  }
+
+  .p-menubar>*:nth-child(3) {
+    order: 3;
+  }
+}
+
+/* Scroll */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  ;
+}
+
+/* Track */
+*::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  width: 8px;
+}
+
+/* Handle */
+*::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 25px;
+}
+
+/* Handle on hover */
+*::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.p-timeline-event-opposite {
+  flex-grow: unset;
+}
