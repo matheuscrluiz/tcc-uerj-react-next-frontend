@@ -6,3 +6,10 @@ export interface Response<T> {
         tip_retorno: serverityTypes;
     };
 }
+
+export interface Auditoria {
+    data_inclusao: Date | string | null;
+    data_alteracao?: Date | string | null;
+    ch_usuario_inclusao: string;
+    ch_usuario_alteracao?: string;
+}
