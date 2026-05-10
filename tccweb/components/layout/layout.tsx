@@ -81,9 +81,9 @@ function Layout({ children }: LayoutProps) {
                     command: () => router.push("/usuario"),
                 },
                 {
-                    label: "Categoria",
+                    label: "Bibliotecas",
                     className: "font-bold",
-                    command: () => router.push("/tipo_categoria"),
+                    command: () => router.push("/biblioteca"),
                 },
             ],
         },

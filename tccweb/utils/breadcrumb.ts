@@ -10,8 +10,8 @@ export function getEndereco(router: NextRouter) {
         ),
         "/": [{ data: "Home", label: "Home", disabled: true }],
         "/usuario": [{ data: "Usuário", label: "Usuário", disabled: true }],
-        "/tipo_categoria": [
-            { data: "Categoria", label: "Categoria", disabled: true },
+        "/biblioteca": [
+            { data: "Bibliotecas", label: "Bibliotecas", disabled: true },
         ],
         "/receita": [{ data: "Receitas", label: "Receitas", disabled: true }],
         "/despesa": [
